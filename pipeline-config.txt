@@ -1,0 +1,104 @@
+================================================================================
+PHASE 2 - PIPELINE DESIGN AND CONFIGURATION
+================================================================================
+Date: 2025-11-20
+Seed: 42
+
+PIPELINE ARCHITECTURE
+================================================================================
+
+Pipeline Steps (Sequential):
+1. Load image (RGB format from disk)
+2. Apply Macenko color normalization to H&E stained tissue
+3. Save normalized image (preserving original format and directory structure)
+
+DATASETS
+================================================================================
+
+Dataset 1: LC25000
+------------------
+- Input:  data/processed/LC25000/LC25000/
+- Output: data/processed/LC25000/macenko_norm/
+- Format: JPEG
+- Resolution: 768×768 pixels
+- Patch extraction: Not applied (images already appropriately sized)
+- Structure: Preserves train/val/test splits and class folders
+
+Dataset 2: CRC5000 (Kather Texture 2016)
+-----------------------------------------
+- Input:  data/processed/CRC5000/Kather_texture_2016_image_tiles_5000/
+- Output: data/processed/CRC5000/macenko_norm/
+- Format: TIFF
+- Resolution: 150×150 pixels
+- Patch extraction: Not applied (images are already small tiles)
+- Structure: Preserves 8 tissue class folders
+
+COLOR NORMALIZATION METHOD
+================================================================================
+
+Method: Macenko Normalization
+Reference: Macenko et al. "A method for normalizing histology slides for
+           quantitative analysis" (IEEE ISBI 2009)
+
+Algorithm:
+1. Convert RGB to Optical Density (OD): OD = -log((RGB + 1) / Io)
+2. Remove background pixels (OD threshold: beta)
+3. Compute stain matrix using SVD on tissue pixels
+4. Extract H&E stain vectors using angular distribution
+5. Normalize to reference stain matrix
+6. Reconstruct RGB image
+
+Hyperparameters:
+- Io (Transmitted light intensity): 240
+- alpha (Percentile for robust computation): 1%
+- beta (OD threshold for tissue detection): 0.15
+
+Reference Stain Matrix (HERef):
+  Hematoxylin: [0.5626, 0.2159]
+  Eosin:       [0.7201, 0.8012]
+  Residual:    [0.4062, 0.5581]
+
+Reference Max Concentrations (maxCRef):
+  [1.9705, 1.0308]
+
+PROCESSING PARAMETERS
+================================================================================
+
+- Random Seed: 42 (for reproducibility)
+- Channel Mode: RGB (3-channel processing)
+- Preserve Structure: Yes (maintain original folder hierarchy)
+- Skip Existing: No (re-process all images)
+- Log Frequency: Every 100 images
+
+OPTIONAL PREPROCESSING (Currently Disabled)
+================================================================================
+
+Denoising: Not applied
+- If enabled, would use Non-Local Means Denoising
+- Parameters: h=10, templateWindowSize=7, searchWindowSize=21
+
+EXECUTION
+================================================================================
+
+Command to run pipeline:
+  python src/run_pipeline.py
+
+Expected outputs:
+- Normalized images in data/processed/*/macenko_norm/
+- Processing log appended to results/logs/pipeline.log
+- Console output with progress and statistics
+
+QUALITY CONTROL
+================================================================================
+
+Before full processing:
+1. Test on sample images (see Phase 2 todo)
+2. Visual inspection of normalization quality
+3. Verify folder structure preservation
+
+After processing:
+1. Check success/failure statistics
+2. Visual comparison of original vs normalized
+3. Proceed to Phase 4 for quantitative metrics (PSNR, SSIM, RMSE)
+
+================================================================================

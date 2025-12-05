@@ -1,0 +1,19 @@
+# Phase 0/2 - Project Requirements
+# Python 3.8+
+
+# Core numerical and image processing
+numpy==1.24.3
+opencv-python==4.8.1.78
+scikit-image==0.21.0
+
+# Progress bars and utilities
+tqdm==4.66.1
+
+# Data analysis and metrics (for Phase 4)
+pandas==2.0.3
+matplotlib==3.7.2
+seaborn==0.12.2
+
+# Optional: Deep learning frameworks (if needed later)
+# torch==2.0.1
+# torchvision==0.15.2

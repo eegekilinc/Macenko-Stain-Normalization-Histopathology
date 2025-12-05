@@ -1,0 +1,14 @@
+data/processed/LC25000/LC25000/
+  train/ (class folders)
+  val/ (class folders)
+  test/ (class folders)
+
+data/processed/CRC5000/Kather_texture_2016_image_tiles_5000/
+  01_TUMOR
+  02_STROMA
+  03_COMPLEX
+  04_LYMPHO
+  05_DEBRIS
+  06_MUCOSA
+  07_ADIPOSE
+  08_EMPTY
